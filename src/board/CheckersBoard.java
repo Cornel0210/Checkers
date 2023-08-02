@@ -25,4 +25,30 @@ public class CheckersBoard {
             }
         }
     }
+
+    public boolean move(Position from, Position to){
+        if (isValid(from) && isValid(to)){
+            Piece piece = board[from.getX()][from.getY()];
+            if(piece!=null && piece.canMove(to)){
+                board[to.getX()][to.getY()] = piece;
+                piece.setPosition(new Position(to.getX(), to.getY()));
+                board[from.getX()][from.getY()] = null;
+
+                if (piece.getColour() == Colour.BLACK && to.getX() == 0){
+                    piece.shapeShift();
+                    System.out.println("shifted");
+                } else if (piece.getColour() == Colour.RED && to.getX() == 7){
+                    piece.shapeShift();
+                    System.out.println("shifted");
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isValid(Position pos) {
+        return pos.getX() >= 0 && pos.getX() <= 7 &&
+                pos.getY() >= 0 && pos.getY() <= 7;
+    }
 }
