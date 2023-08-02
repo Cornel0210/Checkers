@@ -49,13 +49,7 @@ public class CheckersBoard {
                 piece.setPosition(new Position(to.getX(), to.getY()));
                 board[from.getX()][from.getY()] = null;
 
-                if (piece.getColour() == Colour.BLACK && to.getX() == 0){
-                    piece.shapeShift();
-                    System.out.println("shifted");
-                } else if (piece.getColour() == Colour.RED && to.getX() == 7){
-                    piece.shapeShift();
-                    System.out.println("shifted");
-                }
+                piece.shapeShift();
                 return true;
             }
         }
@@ -66,6 +60,7 @@ public class CheckersBoard {
      'capture' method checks for all paths available starting at 'from' position and ending at 'to' position.
      In case that there is only one path identified, it will automatically perform the move(s).
      Otherwise, all paths will be printed on the console and the player can choose the one that he wants to play.
+     More than that, it checks if moved piece can be shale-shifted.
      Returns: true if the move(s) was(were) performed and false otherwise.
      */
     public boolean capture(Position from, Position to){
@@ -78,6 +73,7 @@ public class CheckersBoard {
                 return false;
             } else if (options.size() == 1){
                 applyPath(options.get(0));
+                board[to.getX()][to.getY()].shapeShift();
                 return true;
             } else {
                 System.out.println("Choose the path that you want to go through:");
@@ -93,6 +89,7 @@ public class CheckersBoard {
                 }
 
                 applyPath(options.get(input));
+                board[to.getX()][to.getY()].shapeShift();
                 return true;
             }
         }

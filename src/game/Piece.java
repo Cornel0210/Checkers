@@ -18,7 +18,11 @@ public interface Piece {
      (this can be done when reaching the last lane in the opposite direction from the game's starting position).
      */
     default void shapeShift(){
-        if (this.getPosition().getX()==0 || this.getPosition().getX()==7) {
+        if (this.getPosition().getX()==0 && this.getColour() == Colour.BLACK) {
+            if (this.getType() == Type.MAN) {
+                this.setType(Type.KING);
+            }
+        } else if (this.getPosition().getX()==7 && this.getColour() == Colour.RED){
             if (this.getType() == Type.MAN) {
                 this.setType(Type.KING);
             }
