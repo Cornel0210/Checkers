@@ -2,6 +2,9 @@ package board;
 
 import game.*;
 
+import java.util.List;
+import java.util.Map;
+
 public class CheckersBoard {
     private final Piece[][] board;
 
@@ -45,6 +48,58 @@ public class CheckersBoard {
             }
         }
         return false;
+    }
+    public boolean capture(Position from, Position to){
+        if (isValid(from) && isValid(to)){
+            Map<Integer, List<Position>> options = board[from.getX()][from.getY()].getOptions(to);
+            if (options.size() == 0){
+                return false;
+            } else if (options.size() == 1){
+                applyPath(options.get(0));
+                return true;
+            } else {
+                System.out.println("Choose the path that you want to go through:");
+                for (int i = 0; i < options.size(); i++) {
+                    System.out.print(i + " -> ");
+                    options.get(i).forEach(System.out::print);
+                    System.out.println();
+                }
+                int input = Input.getInstance().getInt();
+                while (input<0 || input > options.size()-1){
+                    System.out.println("Insert a number between 0 and " + (options.size()-1) + ":");
+                    input = Input.getInstance().getInt();
+                }
+
+                applyPath(options.get(input));
+                return true;
+            }
+        }
+        return false;
+    }
+    private void applyPath(List<Position> list){
+        Position first = list.get(0);
+        Piece piece = board[first.getX()][first.getY()];
+        board[first.getX()][first.getY()] = null;
+        Position second = first;
+        for (int i = 1; i < list.size(); i++) {
+            second = list.get(i);
+            if (first.getX()<second.getX() &&
+                    first.getY()<second.getY()){
+                board[first.getX()+1][first.getY()+1] = null;
+            } else if (first.getX()>second.getX() &&
+                    first.getY()>second.getY()){
+                board[first.getX()-1][first.getY()-1] = null;
+            } else if (first.getX()<second.getX() &&
+                    first.getY()>second.getY()){
+                board[first.getX()+1][first.getY()-1] = null;
+            } else if (first.getX()>second.getX() &&
+                    first.getY()<second.getY()){
+                board[first.getX()-1][first.getY()+1] = null;
+            }
+            first = second;
+        }
+        board[second.getX()][second.getY()] = piece;
+        piece.setPosition(second);
     }
 
     private boolean isValid(Position pos) {
