@@ -51,4 +51,34 @@ public class CheckersBoard {
         return pos.getX() >= 0 && pos.getX() <= 7 &&
                 pos.getY() >= 0 && pos.getY() <= 7;
     }
+
+    public Piece[][] getBoard() {
+        return board;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < board.length; i++) {
+            for (int j = 0; j < board.length; j++) {
+                if ((i+j)%2==0){
+                    if (board[i][j] != null) {
+                        stringBuilder.append("\u001b[47;1m").append(board[i][j]).append(" \u001b[0m| ");
+                    } else {
+                        stringBuilder.append("\u001b[47;1m ").append(" \u001b[0m| ");
+
+                    }
+                } else {
+                    if (board[i][j] != null) {
+                        stringBuilder.append(board[i][j]).append(" |\u001b[47;1m \u001b[0m");
+                    } else {
+                        stringBuilder.append(" ").append(" |\u001b[47;1m \u001b[0m");
+                    }
+                }
+            }
+            stringBuilder.replace(stringBuilder.length()-2, stringBuilder.length()-1, "");
+            stringBuilder.append("\n");
+        }
+        return stringBuilder.toString();
+    }
 }
