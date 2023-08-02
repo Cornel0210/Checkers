@@ -13,6 +13,10 @@ public class Red implements Piece{
         this.type = type;
     }
 
+    /**
+     'getOptions' method returns a map containing all routes from current position to the inserted one.
+     If none was identified, it returns null;
+     */
     @Override
     public Map<Integer, List<Position>> getOptions(Position toPos){
         if (isValid(toPos)) {
@@ -25,6 +29,12 @@ public class Red implements Piece{
         return null;
     }
 
+    /**
+     'getOptions' calculates recursively all possible paths from 'start' position to 'end' position.
+     It keeps a list of visited positions which is used to avoid going back to an already visited node.
+     Also, it calculates each possible route from 'start' position to 'end' position and stores it in 'route' parameter.
+     Afterwards, the found route is added to the map ('lists') as a value.
+     */
     private void getOptions(Position start, Position end, LinkedList<Position> visited, LinkedList<Position> route, Map<Integer, List<Position>> lists){
         route.add(start);
         visited.add(start);
@@ -47,6 +57,15 @@ public class Red implements Piece{
         }
     }
 
+    /**
+     'getNeighbours' method generates a list of positions (available squares on the board) where a piece can jump, according to current position
+     (inserted as a parameter).
+     This method is only used for 'KING' pieces.
+     A spot is considered available if all the following conditions are met:
+     - it is valid (placed on the board),
+     - it is on the diagonal path at a distance of two squares,
+     - the destination position is free and between destination and current positions exists a 'BLACK' piece.
+     */
     private List<Position> getNeighbours(Position current){
         Piece[][] board = Game.getInstance().getCheckersBoard().getBoard();
         List<Position> list = new LinkedList<>();
@@ -75,6 +94,15 @@ public class Red implements Piece{
         return list;
     }
 
+    /**
+     'getNeighbours' method generates a list of positions (available squares on the board) where a piece can jump, according to current position
+     (inserted as a parameter).
+     This method is only used for 'MAN' pieces.
+     A spot is considered available if all the following conditions are met:
+     - it is valid (placed on the board),
+     - it is on the diagonal path at a distance of two squares,
+     - the destination position is free and between destination and current positions exists a 'BLACK' piece.
+     */
     private List<Position> getMansNeighbours(Position current){
         Piece[][] board = Game.getInstance().getCheckersBoard().getBoard();
         List<Position> list = new LinkedList<>();
