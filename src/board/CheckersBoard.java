@@ -8,6 +8,8 @@ import java.util.Map;
 public class CheckersBoard {
 
     private final Piece[][] board;
+    private static int blackOut=0;
+    private static int redOut=0;
 
     public CheckersBoard() {
         this.board = new Piece[8][8];
@@ -41,9 +43,12 @@ public class CheckersBoard {
      direction from the game's starting position).
      Returns: true if the move was performed and false otherwise.
      */
-    public boolean move(Position from, Position to){
+    public boolean move(Position from, Position to, Colour colour){
         if (isValid(from) && isValid(to)){
             Piece piece = board[from.getX()][from.getY()];
+            if (piece.getColour()!=colour){
+                return false;
+            }
             if(piece!=null && piece.canMove(to)){
                 board[to.getX()][to.getY()] = piece;
                 piece.setPosition(new Position(to.getX(), to.getY()));
@@ -63,13 +68,14 @@ public class CheckersBoard {
      More than that, it checks if moved piece can be shale-shifted.
      Returns: true if the move(s) was(were) performed and false otherwise.
      */
-    public boolean capture(Position from, Position to){
+    public boolean capture(Position from, Position to, Colour colour){
         if (isValid(from) && isValid(to)){
-            if ((board[from.getX()][from.getY()] == null) || (board[to.getX()][to.getY()] != null)){
+            Piece piece = board[from.getX()][from.getY()];
+            if ((piece == null) || piece.getColour() != colour || (board[to.getX()][to.getY()] != null)){
                 return false;
             }
             Map<Integer, List<Position>> options = board[from.getX()][from.getY()].getOptions(to);
-            if (options.size() == 0){
+            if (options == null){
                 return false;
             } else if (options.size() == 1){
                 applyPath(options.get(0));
@@ -104,6 +110,11 @@ public class CheckersBoard {
     private void applyPath(List<Position> list){
         Position first = list.get(0);
         Piece piece = board[first.getX()][first.getY()];
+        if (piece.getColour()==Colour.BLACK){
+            redOut+=list.size()-1;
+        } else {
+            blackOut+=list.size()-1;
+        }
         board[first.getX()][first.getY()] = null;
         Position second = first;
         for (int i = 1; i < list.size(); i++) {
@@ -126,6 +137,9 @@ public class CheckersBoard {
         board[second.getX()][second.getY()] = piece;
         piece.setPosition(second);
     }
+    public boolean isEnd(){
+        return blackOut == 12 || redOut == 12;
+    }
 
     /**
      'isValid' method checks if the inserted position is valid (between the borders of the board).
@@ -145,29 +159,48 @@ public class CheckersBoard {
      'toString' method was overwritten, so in case that the piece is a `MAN` type, it will print `x` for black and
      'o' for red (normal font, not bold), otherwise, if the piece is a 'KING' type, it will print a bolded 'X' or 'O'.
      */
-
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(" L\\C");
+        for (int i = 0; i < board.length-1; i++) {
+            stringBuilder.append(" ").append(i).append(" |");
+        }
+        stringBuilder.append(" 7 \n");
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board.length; j++) {
-                if ((i+j)%2==0){
-                    if (board[i][j] != null) {
-                        stringBuilder.append("\u001b[47;1m").append(board[i][j]).append(" \u001b[0m| ");
+                if (j == 0){
+                    stringBuilder.append(" ").append(i).append(" |");
+                }
+                if ((i + j) % 2 != 0) {
+                    if (board[i][j] != null && board[i][j].getColour() == Colour.RED) {
+                        if (j == 7) {
+                            stringBuilder.append("\033[0;31m\033[40m ").append(board[i][j]).append(" \u001b[0m\033[0m");
+                        } else {
+                            stringBuilder.append("\033[0;31m\033[40m ").append(board[i][j]).append(" \u001b[0m\033[0m|");
+                        }
+                    } else if (board[i][j] != null && board[i][j].getColour() == Colour.BLACK) {
+                        if (j == 7) {
+                            stringBuilder.append("\u001B[34m\033[40m ").append(board[i][j]).append(" \u001b[0m\033[0m");
+                        } else {
+                            stringBuilder.append("\u001B[34m\033[40m ").append(board[i][j]).append(" \u001b[0m\033[0m|");
+                        }
                     } else {
-                        stringBuilder.append("\u001b[47;1m ").append(" \u001b[0m| ");
-
+                        if (j == 7) {
+                            stringBuilder.append("\033[0;31m\033[40m   \u001b[0m\033[0m");
+                        } else {
+                            stringBuilder.append("\033[0;31m\033[40m   \u001b[0m\033[0m|");
+                        }
                     }
                 } else {
-                    if (board[i][j] != null) {
-                        stringBuilder.append(board[i][j]).append(" |\u001b[47;1m \u001b[0m");
+                    if (j == 7) {
+                        stringBuilder.append("   ");
                     } else {
-                        stringBuilder.append(" ").append(" |\u001b[47;1m \u001b[0m");
+                        stringBuilder.append("   |");
                     }
                 }
             }
-            stringBuilder.replace(stringBuilder.length()-2, stringBuilder.length()-1, "");
-            stringBuilder.append("\n");
+                stringBuilder.append("\n");
         }
         return stringBuilder.toString();
     }

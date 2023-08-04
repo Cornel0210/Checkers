@@ -71,7 +71,7 @@ public class Black implements Piece{
      - the destination position is free and between destination and current positions exists a 'RED' piece.
      */
     private List<Position> getNeighbours(Position current){
-        Piece[][] board = Game.getInstance().getCheckersBoard().getBoard();
+        Piece[][] board = GameBoard.getInstance().getCheckersBoard().getBoard();
         List<Position> list = new LinkedList<>();
         if (isValid(current)){
             Position temp = new Position(current.getX()-1,current.getY()-1);
@@ -108,7 +108,7 @@ public class Black implements Piece{
      - the destination position is free and between destination and current positions exists a 'RED' piece.
      */
     private List<Position> getMansNeighbours(Position current){
-        Piece[][] board = Game.getInstance().getCheckersBoard().getBoard();
+        Piece[][] board = GameBoard.getInstance().getCheckersBoard().getBoard();
         List<Position> list = new LinkedList<>();
         if (isValid(current)){
             Position temp = new Position(current.getX()-1,current.getY()-1);
@@ -156,9 +156,9 @@ public class Black implements Piece{
     @Override
     public String toString() {
         if (this.type == Type.MAN){
-            return "\033[0;30mx\033[0m";
+            return "x";
         } else {
-            return "\033[1;90m\033[1;30mX\033[0m";
+            return "X";
         }
     }
 
