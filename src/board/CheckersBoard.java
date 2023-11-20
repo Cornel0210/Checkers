@@ -46,7 +46,7 @@ public class CheckersBoard {
     public boolean move(Position from, Position to, Colour colour){
         if (isValid(from) && isValid(to)){
             Piece piece = board[from.getX()][from.getY()];
-            if (piece.getColour()!=colour){
+            if (piece!=null && piece.getColour()!=colour){
                 return false;
             }
             if(piece!=null && piece.canMove(to)){

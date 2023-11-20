@@ -3,7 +3,7 @@ package game;
 import board.CheckersBoard;
 
 public class Game {
-    private CheckersBoard board = GameBoard.getInstance().getCheckersBoard();
+    private final CheckersBoard board = GameBoard.getInstance().getCheckersBoard();
     private boolean isBlack = true;
 
     public void run(){
